@@ -135,7 +135,7 @@ export async function build({
     return {
       routes: [
         {
-          src: `${srcBase}/api/(.*)`,
+          src: `${srcBase}/(.*)`,
           dest: `http://localhost:${webPort}/$1`,
         },
       ],

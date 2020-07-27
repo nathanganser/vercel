@@ -93,11 +93,7 @@ export async function build({
   } = config;
 
   if (meta.isDev) {
-    const toml = await readConfigFile<RedwoodConfig>(
-      join(mountpoint, 'redwood.toml')
-    );
-    const webPort = toml?.web?.port || 8910;
-    const apiPort = toml?.web?.port || 8911;
+    const webPort = await getDevPortFromConfig(mountpoint);
     let devPort = entrypointToPort.get(entrypoint);
 
     if (typeof devPort === 'number') {
@@ -140,10 +136,6 @@ export async function build({
       routes: [
         {
           src: `${srcBase}/api/(.*)`,
-          dest: `http://localhost:${apiPort}/$1`,
-        },
-        {
-          src: `${srcBase}/(.*)`,
           dest: `http://localhost:${webPort}/$1`,
         },
       ],
@@ -225,4 +217,13 @@ export async function prepareCache({
 }: PrepareCacheOptions): Promise<Files> {
   const cache = await glob('node_modules/**', workPath);
   return cache;
+}
+
+export async function getDevPortFromConfig(workPath: string): Promise<number> {
+  const toml = await readConfigFile<RedwoodConfig>(
+    join(workPath, 'redwood.toml')
+  );
+  const port = toml?.web?.port || 8910;
+  debug(`Detected redwood.toml web port ${port}`);
+  return port;
 }

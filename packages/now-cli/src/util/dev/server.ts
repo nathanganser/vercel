@@ -41,6 +41,8 @@ import {
   isOfficialRuntime,
 } from '@vercel/build-utils';
 
+import { getDevPortFromConfig as getRedwoodPort } from '@vercel/redwood';
+
 import link from '../output/link';
 import { Output } from '../output';
 import { relative } from '../path-helpers';
@@ -1952,7 +1954,11 @@ export default class DevServer {
       `Running Dev Command ${chalk.cyan.bold(`“${devCommand}”`)}`
     );
 
-    const port = await getPort();
+    let port = await getPort();
+
+    if (this.frameworkSlug === 'redwoodjs') {
+      port = await getRedwoodPort(cwd);
+    }
 
     const env: Env = {
       // Because of child process 'pipe' below, isTTY will be false.

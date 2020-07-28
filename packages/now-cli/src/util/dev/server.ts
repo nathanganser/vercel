@@ -1954,11 +1954,7 @@ export default class DevServer {
       `Running Dev Command ${chalk.cyan.bold(`“${devCommand}”`)}`
     );
 
-    let port = await getPort();
-
-    if (this.frameworkSlug === 'redwoodjs') {
-      port = await getRedwoodPort(cwd);
-    }
+    const port = await (this.frameworkSlug === 'redwoodjs' ? getRedwoodPort(cwd) : getPort());
 
     const env: Env = {
       // Because of child process 'pipe' below, isTTY will be false.

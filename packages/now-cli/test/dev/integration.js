@@ -236,6 +236,11 @@ function testFixtureStdio(
   { expectedCode = 0, skipDeploy, isExample } = {}
 ) {
   return async t => {
+    if (isExample && !process.version.startsWith('v12.')) {
+      console.log(`Skipping ${directory} on Node ${process.version}`);
+      t.pass();
+      return;
+    }
     const cwd = isExample
       ? exampleAbsolute(directory)
       : fixtureAbsolute(directory);
